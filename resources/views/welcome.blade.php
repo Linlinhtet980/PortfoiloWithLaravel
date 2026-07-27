@@ -67,7 +67,10 @@
                 <!-- Cell 5: Services Offered -->
                 <section class="bento-card services-card" id="services-cell">
                     <span class="tech-card-index">// SYS_SERVICES_OFFER</span>
-                    <h3 class="card-title"><i class="fas fa-concierge-bell"></i> Services</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; width: 100%;">
+                        <h3 class="card-title" style="margin: 0;"><i class="fas fa-concierge-bell"></i> Services</h3>
+                        <button type="button" class="btn-see-all" id="seeAllServicesBtn">See All <i class="fas fa-external-link-alt" style="font-size: 0.75rem; margin-left: 4px;"></i></button>
+                    </div>
                     <div class="services-list" style="justify-content: center; flex: 1;">
                         <div class="service-item-row">
                             <div class="service-icon-box">
@@ -93,7 +96,10 @@
                 <!-- Cell 6: Recent Blog Posts -->
                 <section class="bento-card blog-card" id="blog-cell">
                     <span class="tech-card-index">// SYS_BLOG_POSTS</span>
-                    <h3 class="card-title"><i class="fas fa-pen-nib"></i> Latest Articles</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; width: 100%;">
+                        <h3 class="card-title" style="margin: 0;"><i class="fas fa-pen-nib"></i> Latest Articles</h3>
+                        <button type="button" class="btn-see-all" id="seeAllBlogsBtn">See All <i class="fas fa-external-link-alt" style="font-size: 0.75rem; margin-left: 4px;"></i></button>
+                    </div>
                     <div class="blog-grid-list" style="justify-content: center; flex: 1;">
                         <a href="#" class="blog-item-row">
                             <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=70&h=50" alt="Laravel 11" class="blog-item-thumb">
@@ -322,6 +328,87 @@
                         <div class="project-item-links" style="margin-top: 12px;">
                             <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Modal Overlay -->
+    <div class="portfolio-modal" id="servicesModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-concierge-bell"></i> All Services</h3>
+                <button type="button" class="modal-close-btn" id="closeServicesModal">&times;</button>
+            </div>
+            <div class="modal-body" style="gap: 16px;">
+                <div class="service-item-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 4px;">
+                    <div class="service-icon-box"><i class="fas fa-laptop-code"></i></div>
+                    <div class="service-info-box">
+                        <h4 style="font-size: 1.05rem; font-family: var(--font-display); font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Web App Development</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">End-to-end custom application development using Laravel, PHP, and modern frontend engines. We prioritize scalable query speeds, neat routing pipelines, and secure user states.</p>
+                    </div>
+                </div>
+                <div class="service-item-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 4px;">
+                    <div class="service-icon-box"><i class="fas fa-server"></i></div>
+                    <div class="service-info-box">
+                        <h4 style="font-size: 1.05rem; font-family: var(--font-display); font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">API Integrations</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">Design and connect secure RESTful JSON APIs. Seamless integrations with payment portals, third-party authentication protocols, webhook loops, and structured databases.</p>
+                    </div>
+                </div>
+                <div class="service-item-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 4px;">
+                    <div class="service-icon-box"><i class="fas fa-paint-brush"></i></div>
+                    <div class="service-info-box">
+                        <h4 style="font-size: 1.05rem; font-family: var(--font-display); font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">UI/UX Implementation</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">Converting Figma design assets into highly responsive, pixel-perfect HTML5/CSS3 layouts. Focused on smooth interaction timelines, animations, and dark/light system adaptation.</p>
+                    </div>
+                </div>
+                <div class="service-item-row">
+                    <div class="service-icon-box"><i class="fas fa-database"></i></div>
+                    <div class="service-info-box">
+                        <h4 style="font-size: 1.05rem; font-family: var(--font-display); font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Database Optimization</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">Schema refactoring, database normalization, index tracking, query optimizations, and foreign keys. Prevent execution blockages and eliminate latency bottlenecks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Articles Modal Overlay -->
+    <div class="portfolio-modal" id="blogsModal">
+        <div class="modal-content" style="max-width: 680px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-pen-nib"></i> All Articles</h3>
+                <button type="button" class="modal-close-btn" id="closeBlogsModal">&times;</button>
+            </div>
+            <div class="modal-body" style="gap: 20px;">
+                <!-- Blog item 1 -->
+                <div class="project-modal-item">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=200&h=120" alt="Laravel 11" class="project-modal-thumb">
+                    <div class="project-modal-info">
+                        <h4>Getting Started with Laravel 11</h4>
+                        <p>An in-depth guide covering the new lightweight configuration skeleton, app structure optimizations, and performance tweaks in Laravel 11.</p>
+                        <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: inline-block;">Published on Jul 20, 2026 • 324 views</span>
+                    </div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 5px 0;">
+                <!-- Blog item 2 -->
+                <div class="project-modal-item">
+                    <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=200&h=120" alt="Bento UI" class="project-modal-thumb">
+                    <div class="project-modal-info">
+                        <h4>Bento Grids Dominating Web UI</h4>
+                        <p>Why the Bento Grid layout style is becoming the go-to layout trend for developers and designer portfolios in 2026.</p>
+                        <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: inline-block;">Published on Jul 15, 2026 • 156 views</span>
+                    </div>
+                </div>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 5px 0;">
+                <!-- Blog item 3 -->
+                <div class="project-modal-item">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=200&h=120" alt="CSS Grid" class="project-modal-thumb">
+                    <div class="project-modal-info">
+                        <h4>Mastering CSS Grid & Flexbox</h4>
+                        <p>Learn how to write dynamic, responsive bento grids, control card flows, align content elements, and design robust web layouts.</p>
+                        <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: inline-block;">Published on Jul 10, 2026 • 98 views</span>
                     </div>
                 </div>
             </div>

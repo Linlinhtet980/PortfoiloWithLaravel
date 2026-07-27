@@ -236,4 +236,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ====== ALL SERVICES MODAL TOGGLE ======
+    const seeAllServicesBtn = document.getElementById('seeAllServicesBtn');
+    const closeServicesModal = document.getElementById('closeServicesModal');
+    const servicesModal = document.getElementById('servicesModal');
+
+    if (seeAllServicesBtn && closeServicesModal && servicesModal) {
+        seeAllServicesBtn.addEventListener('click', () => {
+            servicesModal.classList.add('show');
+        });
+
+        closeServicesModal.addEventListener('click', () => {
+            servicesModal.classList.remove('show');
+        });
+
+        // Close when clicking overlay backdrop
+        servicesModal.addEventListener('click', (e) => {
+            if (e.target === servicesModal) {
+                servicesModal.classList.remove('show');
+            }
+        });
+    }
+
+    // ====== ALL ARTICLES (BLOGS) MODAL TOGGLE ======
+    const seeAllBlogsBtn = document.getElementById('seeAllBlogsBtn');
+    const closeBlogsModal = document.getElementById('closeBlogsModal');
+    const blogsModal = document.getElementById('blogsModal');
+
+    if (seeAllBlogsBtn && closeBlogsModal && blogsModal) {
+        seeAllBlogsBtn.addEventListener('click', () => {
+            blogsModal.classList.add('show');
+        });
+
+        closeBlogsModal.addEventListener('click', () => {
+            blogsModal.classList.remove('show');
+        });
+
+        // Close when clicking overlay backdrop
+        blogsModal.addEventListener('click', (e) => {
+            if (e.target === blogsModal) {
+                blogsModal.classList.remove('show');
+            }
+        });
+    }
+
 });
