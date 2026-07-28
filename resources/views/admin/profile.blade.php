@@ -126,5 +126,51 @@
             </div>
         </div>
 
+        <!-- Account Security Settings (Email & Password Update) -->
+        <div class="card" style="margin-top: 25px;">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-lock"></i> Account Security Settings</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('admin.security.update') }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    
+                    @if (session('security_success'))
+                        <div style="background: rgba(46, 204, 113, 0.15); border: 1px solid #2ecc71; border-radius: 4px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; color: #2ecc71;">
+                            {{ session('security_success') }}
+                        </div>
+                    @endif
+                    @if ($errors->any())
+                        <div style="background: rgba(235, 77, 75, 0.15); border: 1px solid #eb4d4b; border-radius: 4px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; color: #ff7675;">
+                            <ul style="margin: 0; padding-left: 15px;">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <div class="admin-form-grid">
+                        <div class="form-group">
+                            <label for="security-email">Login Email Address</label>
+                            <input type="email" id="security-email" name="email" class="form-control" value="{{ Auth::user()->email }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="security-password">New Password (Leave blank to keep current)</label>
+                            <input type="password" id="security-password" name="password" class="form-control" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label for="security-password-confirm">Confirm New Password</label>
+                            <input type="password" id="security-password-confirm" name="password_confirmation" class="form-control" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="form-actions" style="margin-top: 20px; padding-top: 0; border-top: none;">
+                        <button type="submit" class="btn-admin btn-admin-primary">Update Credentials</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 @endsection

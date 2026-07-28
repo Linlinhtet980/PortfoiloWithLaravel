@@ -62,7 +62,10 @@
                 <span>Profile Settings</span>
             </a>
             <hr class="dropup-divider">
-            <button class="dropup-item logout-action-btn" type="button">
+            <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+            <button class="dropup-item logout-action-btn" onclick="document.getElementById('admin-logout-form').submit();" type="button">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Logout</span>
             </button>

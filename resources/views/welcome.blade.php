@@ -149,46 +149,58 @@
                         
                         <!-- Slider Carousel -->
                         <div class="projects-slider">
-                            <!-- Project Slide 1 -->
-                            <article class="project-slide active">
-                                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=600&h=300" alt="School System" class="project-slide-thumb">
-                                <div class="project-slide-content">
-                                    <h4 class="project-slide-title">School Management System</h4>
-                                    <p class="project-slide-desc">Comprehensive database system to manage students, teachers, classes, and marks.</p>
-                                    <div class="project-slide-techs">
-                                        <i class="fab fa-php" title="PHP" style="color: #a29bfe;"></i>
-                                        <i class="fas fa-database" title="MySQL" style="color: #00cec9;"></i>
-                                        <i class="fab fa-js" title="JavaScript" style="color: #ffeaa7;"></i>
+                            @forelse($projects as $index => $project)
+                                <article class="project-slide {{ $index === 0 ? 'active' : '' }}">
+                                    @if($project->cover_image)
+                                        <img src="{{ Str::startsWith($project->cover_image, 'http') ? $project->cover_image : asset('storage/' . $project->cover_image) }}" alt="{{ $project->title }}" class="project-slide-thumb">
+                                    @endif
+                                    <div class="project-slide-content">
+                                        <a href="{{ route('projects.detail', $project->slug) }}" style="text-decoration: none;">
+                                            <h4 class="project-slide-title">{{ $project->title }}</h4>
+                                        </a>
+                                        <p class="project-slide-desc">{{ $project->description }}</p>
+                                        <div class="project-slide-techs">
+                                            @if($project->technologies)
+                                                @foreach($project->technologies as $tech)
+                                                    @php
+                                                        $tech = strtolower(trim($tech));
+                                                        $icon = 'fas fa-code';
+                                                        $color = 'var(--text-muted)';
+                                                        if($tech === 'php') { $icon = 'fab fa-php'; $color = '#a29bfe'; }
+                                                        elseif($tech === 'mysql' || $tech === 'database') { $icon = 'fas fa-database'; $color = '#00cec9'; }
+                                                        elseif($tech === 'js' || $tech === 'javascript') { $icon = 'fab fa-js'; $color = '#ffeaa7'; }
+                                                        elseif($tech === 'html5') { $icon = 'fab fa-html5'; $color = '#ff7675'; }
+                                                        elseif($tech === 'css3') { $icon = 'fab fa-css3-alt'; $color = '#74b9ff'; }
+                                                        elseif($tech === 'git' || $tech === 'github') { $icon = 'fab fa-github'; $color = '#ffffff'; }
+                                                        elseif($tech === 'figma') { $icon = 'fab fa-figma'; $color = '#a55eea'; }
+                                                    @endphp
+                                                    <i class="{{ $icon }}" title="{{ strtoupper($tech) }}" style="color: {{ $color }};"></i>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                        <div class="project-item-links">
+                                            @if($project->github_link)
+                                                <a href="{{ $project->github_link }}" target="_blank" title="GitHub Link"><i class="fab fa-github"></i></a>
+                                            @endif
+                                            @if($project->live_link)
+                                                <a href="{{ $project->live_link }}" target="_blank" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="project-item-links">
-                                        <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                                        <a href="#" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
-                                    </div>
+                                </article>
+                            @empty
+                                <div style="padding: 40px; text-align: center; color: var(--text-muted); width: 100%;">
+                                    <i class="fas fa-project-diagram" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+                                    No featured projects yet.
                                 </div>
-                            </article>
-
-                            <!-- Project Slide 2 -->
-                            <article class="project-slide">
-                                <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=600&h=300" alt="Movie App" class="project-slide-thumb">
-                                <div class="project-slide-content">
-                                    <h4 class="project-slide-title">Movie Cataloging App</h4>
-                                    <p class="project-slide-desc">Responsive movie library browsing with API data fetching and custom search filters.</p>
-                                    <div class="project-slide-techs">
-                                        <i class="fab fa-html5" title="HTML5" style="color: #ff7675;"></i>
-                                        <i class="fab fa-css3-alt" title="CSS3" style="color: #74b9ff;"></i>
-                                        <i class="fab fa-js" title="JavaScript" style="color: #ffeaa7;"></i>
-                                    </div>
-                                    <div class="project-item-links">
-                                        <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                                    </div>
-                                </div>
-                            </article>
+                            @endforelse
                         </div>
 
                         <!-- Pagination indicator dots -->
                         <div class="slider-indicators">
-                            <span class="indicator-dot active" data-slide="0"></span>
-                            <span class="indicator-dot" data-slide="1"></span>
+                            @foreach($projects as $index => $project)
+                                <span class="indicator-dot {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}"></span>
+                            @endforeach
                         </div>
                     </div>
                 </section>
@@ -248,10 +260,22 @@
                 <!-- Cell 8: Live Status Card -->
                 <section class="bento-card status-card" id="status-cell">
                     <span class="tech-card-index">// SYS_LIVE_STATUS</span>
-                    <div style="display: flex; align-items: center; gap: 10px; margin: auto 0; width: 100%;">
-                        <span class="status-pulse-dot"></span>
-                        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Yangon, MM</span>
-                        <span style="font-size: 0.78rem; color: var(--text-muted); margin-left: auto;">Yangon Time</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px; justify-content: center; flex: 1; width: 100%;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="status-pulse-dot"></span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Yangon, MM</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">Active Now</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px; font-size: 0.76rem;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <i class="fab fa-github" style="color: var(--text-primary);"></i>
+                                <span style="color: var(--text-secondary);">Repos: <strong>{{ $githubStats['repos'] }}</strong></span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-users" style="color: var(--accent-primary);"></i>
+                                <span style="color: var(--text-secondary);">Followers: <strong>{{ $githubStats['followers'] }}</strong></span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -259,10 +283,11 @@
                 <section class="bento-card contact-card" id="contact-cell">
                     <span class="tech-card-index">// SYS_CONTACT_FORM</span>
                     <h3 class="card-title"><i class="fas fa-envelope"></i> Message Me</h3>
-                    <form id="portfolioContactForm" class="contact-form-container" style="justify-content: center; flex: 1; display: flex; flex-direction: column; gap: 10px;">
-                        <input type="text" class="contact-form-control" placeholder="Your Name" required>
-                        <input type="email" class="contact-form-control" placeholder="Your Email Address" required>
-                        <textarea class="contact-form-control" rows="3" placeholder="Your message here..." required></textarea>
+                    <form id="portfolioContactForm" action="{{ route('contact.submit') }}" method="POST" class="contact-form-container" style="justify-content: center; flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                        @csrf
+                        <input type="text" name="name" id="contact-name" class="contact-form-control" placeholder="Your Name" required>
+                        <input type="email" name="email" id="contact-email" class="contact-form-control" placeholder="Your Email Address" required>
+                        <textarea name="message" id="contact-message" class="contact-form-control" rows="3" placeholder="Your message here..." required></textarea>
                         <button type="submit" class="btn-contact-submit" style="width: 100%;">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
@@ -296,40 +321,54 @@
                 <button type="button" class="modal-close-btn" id="closeProjectsModal">&times;</button>
             </div>
             <div class="modal-body" style="gap: 20px;">
-                <!-- Project 1 -->
-                <div class="project-modal-item">
-                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=350&h=180" alt="School System" class="project-modal-thumb">
-                    <div class="project-modal-info">
-                        <h4>School Management System</h4>
-                        <p>A comprehensive system designed for schools to manage pupil enrolment, classes, grading records, and teacher schedules securely.</p>
-                        <div class="project-slide-techs" style="margin-top: 8px;">
-                            <i class="fab fa-php" title="PHP" style="color: #a29bfe;"></i>
-                            <i class="fas fa-database" title="MySQL" style="color: #00cec9;"></i>
-                            <i class="fab fa-js" title="JavaScript" style="color: #ffeaa7;"></i>
-                        </div>
-                        <div class="project-item-links" style="margin-top: 12px;">
-                            <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                            <a href="#" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
+                @forelse($projects as $index => $project)
+                    <!-- Project item -->
+                    <div class="project-modal-item">
+                        @if($project->cover_image)
+                            <img src="{{ Str::startsWith($project->cover_image, 'http') ? $project->cover_image : asset('storage/' . $project->cover_image) }}" alt="{{ $project->title }}" class="project-modal-thumb">
+                        @endif
+                        <div class="project-modal-info">
+                            <a href="{{ route('projects.detail', $project->slug) }}" style="text-decoration: none;">
+                                <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-primary); font-family: var(--font-display); font-weight: 700;">{{ $project->title }}</h4>
+                            </a>
+                            <p style="margin: 4px 0 0 0;">{{ $project->description }}</p>
+                            <div class="project-slide-techs" style="margin-top: 8px;">
+                                @if($project->technologies)
+                                    @foreach($project->technologies as $tech)
+                                        @php
+                                            $tech = strtolower(trim($tech));
+                                            $icon = 'fas fa-code';
+                                            $color = 'var(--text-muted)';
+                                            if($tech === 'php') { $icon = 'fab fa-php'; $color = '#a29bfe'; }
+                                            elseif($tech === 'mysql' || $tech === 'database') { $icon = 'fas fa-database'; $color = '#00cec9'; }
+                                            elseif($tech === 'js' || $tech === 'javascript') { $icon = 'fab fa-js'; $color = '#ffeaa7'; }
+                                            elseif($tech === 'html5') { $icon = 'fab fa-html5'; $color = '#ff7675'; }
+                                            elseif($tech === 'css3') { $icon = 'fab fa-css3-alt'; $color = '#74b9ff'; }
+                                            elseif($tech === 'git' || $tech === 'github') { $icon = 'fab fa-github'; $color = '#ffffff'; }
+                                            elseif($tech === 'figma') { $icon = 'fab fa-figma'; $color = '#a55eea'; }
+                                        @endphp
+                                        <i class="{{ $icon }}" title="{{ strtoupper($tech) }}" style="color: {{ $color }};"></i>
+                                    @endforeach
+                                @endif
+                            </div>
+                            <div class="project-item-links" style="margin-top: 12px;">
+                                @if($project->github_link)
+                                    <a href="{{ $project->github_link }}" target="_blank" title="GitHub Link"><i class="fab fa-github"></i></a>
+                                @endif
+                                @if($project->live_link)
+                                    <a href="{{ $project->live_link }}" target="_blank" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 5px 0;">
-                <!-- Project 2 -->
-                <div class="project-modal-item">
-                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=350&h=180" alt="Movie App" class="project-modal-thumb">
-                    <div class="project-modal-info">
-                        <h4>Movie Cataloging App</h4>
-                        <p>Browse, search, and catalog movies in a sleek responsive layout. Fetches movie details and reviews from public database APIs.</p>
-                        <div class="project-slide-techs" style="margin-top: 8px;">
-                            <i class="fab fa-html5" title="HTML5" style="color: #ff7675;"></i>
-                            <i class="fab fa-css3-alt" title="CSS3" style="color: #74b9ff;"></i>
-                            <i class="fab fa-js" title="JavaScript" style="color: #ffeaa7;"></i>
-                        </div>
-                        <div class="project-item-links" style="margin-top: 12px;">
-                            <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                        </div>
+                    @if(!$loop->last)
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 5px 0;">
+                    @endif
+                @empty
+                    <div style="padding: 40px; text-align: center; color: var(--text-muted); width: 100%;">
+                        No projects available.
                     </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </div>

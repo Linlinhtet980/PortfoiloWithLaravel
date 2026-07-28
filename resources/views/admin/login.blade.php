@@ -22,11 +22,21 @@
                 <p class="login-subtitle">Sign in to manage your portfolio</p>
             </div>
 
-            <form action="{{ route('admin.dashboard') }}" method="GET" class="login-form">
+            @if ($errors->any())
+                <div style="background: rgba(235, 77, 75, 0.15); border: 1px solid #eb4d4b; border-radius: 4px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; color: #ff7675;">
+                    <ul style="margin: 0; padding-left: 15px;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('admin.login.submit') }}" method="POST" class="login-form">
                 @csrf
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@example.com" required autocomplete="email" autofocus>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@gmail.com" value="{{ old('email') }}" required autocomplete="email" autofocus>
                 </div>
 
                 <div class="form-group">

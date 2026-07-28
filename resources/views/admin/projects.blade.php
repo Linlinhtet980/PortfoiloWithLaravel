@@ -24,93 +24,59 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=100&h=60" alt="School System" class="project-thumb">
-                            </td>
-                            <td>
-                                <strong>School Management System</strong>
-                                <br>
-                                <span class="stat-label">Student & Teacher management system...</span>
-                            </td>
-                            <td>
-                                <div class="tech-badges-list">
-                                    <span class="tech-tag">PHP</span>
-                                    <span class="tech-tag">MySQL</span>
-                                    <span class="tech-tag">HTML5</span>
-                                    <span class="tech-tag">JavaScript</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="project-links-cell">
-                                    <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                                    <a href="#" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=100&h=60" alt="Movie App" class="project-thumb">
-                            </td>
-                            <td>
-                                <strong>Movie App</strong>
-                                <br>
-                                <span class="stat-label">Browse latest high rated movies...</span>
-                            </td>
-                            <td>
-                                <div class="tech-badges-list">
-                                    <span class="tech-tag">HTML5</span>
-                                    <span class="tech-tag">CSS3</span>
-                                    <span class="tech-tag">JavaScript</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="project-links-cell">
-                                    <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=100&h=60" alt="Portfolio" class="project-thumb">
-                            </td>
-                            <td>
-                                <strong>Personal Portfolio</strong>
-                                <br>
-                                <span class="stat-label">Responsive design website presentation...</span>
-                            </td>
-                            <td>
-                                <div class="tech-badges-list">
-                                    <span class="tech-tag">HTML5</span>
-                                    <span class="tech-tag">CSS3</span>
-                                    <span class="tech-tag">JavaScript</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="project-links-cell">
-                                    <a href="#" title="GitHub Link"><i class="fab fa-github"></i></a>
-                                    <a href="#" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse($projects as $project)
+                            <tr>
+                                <td>
+                                    @if($project->cover_image)
+                                        <img src="{{ Str::startsWith($project->cover_image, 'http') ? $project->cover_image : asset('storage/' . $project->cover_image) }}" alt="{{ $project->title }}" class="project-thumb">
+                                    @else
+                                        <div class="project-thumb" style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                            <i class="fas fa-image" style="color: var(--text-muted);"></i>
+                                        </div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <strong>{{ $project->title }}</strong>
+                                    <br>
+                                    <span class="stat-label">{{ Str::limit($project->description, 60) }}</span>
+                                </td>
+                                <td>
+                                    <div class="tech-badges-list">
+                                        @if($project->technologies)
+                                            @foreach($project->technologies as $tech)
+                                                <span class="tech-tag">{{ strtoupper($tech) }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="project-links-cell">
+                                        @if($project->github_link)
+                                            <a href="{{ $project->github_link }}" target="_blank" title="GitHub Link"><i class="fab fa-github"></i></a>
+                                        @endif
+                                        @if($project->live_link)
+                                            <a href="{{ $project->live_link }}" target="_blank" title="Live Link"><i class="fas fa-external-link-alt"></i></a>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="{{ route('admin.projects.edit', $project->id) }}" class="btn-action btn-edit" title="Edit" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;"><i class="fas fa-edit"></i></a>
+                                        <form action="{{ route('admin.projects.delete', $project->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this project?');" style="display: inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">
+                                    No projects created yet.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

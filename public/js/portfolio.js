@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ====== MOCK CONTACT FORM SUBMISSION ======
+    // ====== CONTACT FORM SUBMISSION ======
     const contactForm = document.getElementById('portfolioContactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
@@ -45,16 +45,32 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             
-            // Simulate API request delay
-            setTimeout(() => {
-                // Success Toast Feedback
-                showToast('Success!', 'Thank you! Your message has been sent successfully.', 'success');
-                
-                // Reset form
-                contactForm.reset();
+            const formData = new FormData(contactForm);
+            
+            fetch('/contact', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showToast('Success!', 'Thank you! Your message has been sent successfully.', 'success');
+                    contactForm.reset();
+                } else {
+                    showToast('Error', 'Something went wrong. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Error', 'Failed to connect. Please try again.', 'error');
+                console.error('Error:', error);
+            })
+            .finally(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
-            }, 1500);
+            });
         });
     }
 
