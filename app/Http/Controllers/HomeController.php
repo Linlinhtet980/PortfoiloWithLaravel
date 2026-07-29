@@ -9,9 +9,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $projects = Project::latest()->get();
-        $skills = \App\Models\Skill::all();
-        $profile = \App\Models\User::first();
+        $projects = Project::query()->latest()->get();
+        $skills = \App\Models\Skill::query()->get();
+        $profile = \App\Models\User::query()->first();
 
         // Record a profile view if not visited in this session
         if (!session()->has('portfolio_visited')) {
@@ -53,9 +53,9 @@ class HomeController extends Controller
         return view('welcome', compact('projects', 'githubStats', 'profile', 'skills'));
     }
 
-    public function projectDetail($slug)
+    public function projectDetail(string $slug)
     {
-        $project = Project::where('slug', $slug)->firstOrFail();
+        $project = Project::query()->where('slug', '=', $slug, 'and')->firstOrFail();
         
         try {
             $project->increment('views');
