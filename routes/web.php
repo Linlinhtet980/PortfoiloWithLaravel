@@ -34,6 +34,7 @@ Route::prefix('admin')->group(function () {
         
         // Additional Admin Modules (Profile, Blog, Resume/Services)
         Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+        Route::put('/profile', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
         Route::put('/profile/security', [AdminController::class, 'updateSecurity'])->name('admin.security.update');
         Route::get('/blog', [AdminController::class, 'blog'])->name('admin.blog');
         Route::get('/blog/create', [AdminController::class, 'createBlog'])->name('admin.blog.create');

@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'icon_class',
+        'color',
+        'proficiency',
+        'category',
+    ];
 }

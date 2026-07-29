@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             'password' => \Illuminate\Support\Facades\Hash::make('Password123'),
         ]);
 
-        $this->call([
-            ProjectSeeder::class,
-        ]);
+        // $this->call([
+        //     ProjectSeeder::class,
+        // ]);
     }
 }

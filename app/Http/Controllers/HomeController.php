@@ -10,6 +10,7 @@ class HomeController extends Controller
     public function index()
     {
         $projects = Project::latest()->get();
+        $profile = \App\Models\User::first();
 
         $githubStats = cache()->remember('github_stats', 3600, function () {
             try {
@@ -35,7 +36,7 @@ class HomeController extends Controller
             ];
         });
 
-        return view('welcome', compact('projects', 'githubStats'));
+        return view('welcome', compact('projects', 'githubStats', 'profile'));
     }
 
     public function projectDetail($slug)

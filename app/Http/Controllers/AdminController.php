@@ -164,6 +164,51 @@ class AdminController extends Controller
         return view('admin.profile');
     }
 
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'avatar' => 'nullable|image|max:2048',
+            'cv' => 'nullable|mimes:pdf|max:5120',
+            'github' => 'nullable|url',
+            'linkedin' => 'nullable|url',
+            'telegram' => 'nullable|url',
+            'phone' => 'nullable|string|max:50',
+            'bio' => 'required|string',
+        ]);
+
+        $user->name = $request->name;
+        $user->job_title = $request->title;
+        $user->github_link = $request->github;
+        $user->linkedin_link = $request->linkedin;
+        $user->telegram_link = $request->telegram;
+        $user->phone = $request->phone;
+        $user->bio = $request->bio;
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && !\Illuminate\Support\Str::startsWith($user->avatar, 'http')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $path = $request->file('avatar')->store('profile', 'public');
+            $user->avatar = $path;
+        }
+
+        if ($request->hasFile('cv')) {
+            if ($user->cv_path && !\Illuminate\Support\Str::startsWith($user->cv_path, 'http')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->cv_path);
+            }
+            $path = $request->file('cv')->store('profile', 'public');
+            $user->cv_path = $path;
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.profile')->with('profile_success', 'Profile settings updated successfully!');
+    }
+
     public function updateSecurity(Request $request)
     {
         $user = auth()->user();

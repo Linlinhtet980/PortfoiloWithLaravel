@@ -50,17 +50,17 @@
                 <section class="bento-card hero-card-v2" id="hero-cell">
                     <span class="tech-card-index">// SYS_HERO_INFO</span>
                     <div class="hero-header-v2">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150&h=150" alt="Lin Thu Rein Htet" class="hero-avatar">
-                        <h1 class="hero-title">Lin Thu Rein Htet</h1>
-                        <p class="hero-subtitle">Available for Freelance</p>
+                        <img src="{{ $profile && $profile->avatar ? asset('storage/' . $profile->avatar) : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150&h=150' }}" alt="{{ $profile ? $profile->name : 'Lin Thu Rein Htet' }}" class="hero-avatar">
+                        <h1 class="hero-title">{{ $profile ? $profile->name : 'Lin Thu Rein Htet' }}</h1>
+                        <p class="hero-subtitle">{{ $profile ? ($profile->job_title ?? 'Full-Stack Developer') : 'Available for Freelance' }}</p>
                     </div>
                     <p class="hero-desc">
-                        Full-Stack Developer specializing in Laravel, JavaScript, and custom styling. Passionate about building modular, pixel-perfect, and premium web applications.
+                        {{ $profile && $profile->bio ? $profile->bio : 'Full-Stack Developer specializing in Laravel, JavaScript, and custom styling. Passionate about building modular, pixel-perfect, and premium web applications.' }}
                     </p>
                     <div class="social-icons-row" style="margin-left: 0; justify-content: center; width: 100%; margin-top: auto; padding-top: 15px;">
-                        <a href="https://github.com/Linlinhtet980" target="_blank" class="social-icon-btn" title="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="https://linkedin.com/in/linthureinhtet" target="_blank" class="social-icon-btn" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://t.me/linthureinhtet" target="_blank" class="social-icon-btn" title="Telegram"><i class="fab fa-telegram"></i></a>
+                        <a href="{{ $profile && $profile->github_link ? $profile->github_link : 'https://github.com/Linlinhtet980' }}" target="_blank" class="social-icon-btn" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="{{ $profile && $profile->linkedin_link ? $profile->linkedin_link : 'https://linkedin.com/in/linthureinhtet' }}" target="_blank" class="social-icon-btn" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="{{ $profile && $profile->telegram_link ? $profile->telegram_link : 'https://t.me/linthureinhtet' }}" target="_blank" class="social-icon-btn" title="Telegram"><i class="fab fa-telegram"></i></a>
                     </div>
                 </section>
 
