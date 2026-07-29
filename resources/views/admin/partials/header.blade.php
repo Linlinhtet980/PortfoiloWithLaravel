@@ -12,10 +12,12 @@
             <span>Visit Site</span>
         </a>
         
-        <button class="header-action-btn" aria-label="Notifications">
+        <a href="{{ route('admin.messages') }}" class="header-action-btn" aria-label="Notifications" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
             <i class="fas fa-bell"></i>
-            <span class="notification-badge"></span>
-        </button>
+            @if(\App\Models\Message::query()->count('*') > 0)
+                <span class="notification-badge"></span>
+            @endif
+        </a>
         
         <button class="header-action-btn" id="admin-theme-toggle" aria-label="Toggle theme">
             <i class="fas fa-moon"></i>

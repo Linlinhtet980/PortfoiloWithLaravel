@@ -304,7 +304,9 @@ class AdminController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.profile')->with('profile_success', 'Profile settings updated successfully!');
+        return redirect()->route('admin.profile')
+            ->with('profile_success', 'Profile settings updated successfully!')
+            ->with('success', 'Profile settings updated successfully!');
     }
 
     public function updateSecurity(Request $request)
@@ -325,7 +327,9 @@ class AdminController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.profile')->with('security_success', 'Login credentials updated successfully!');
+        return redirect()->route('admin.profile')
+            ->with('security_success', 'Login credentials updated successfully!')
+            ->with('success', 'Login credentials updated successfully!');
     }
 
     public function blog()
