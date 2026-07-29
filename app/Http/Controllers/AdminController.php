@@ -13,12 +13,62 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $projectsCount = \App\Models\Project::query()->count('*');
+        $skillsCount = \App\Models\Skill::query()->count('*');
+        $messagesCount = \App\Models\Message::query()->count('*');
+        $visitsCount = \App\Models\Visit::query()->count('*');
+        
+        $recentMessages = \App\Models\Message::query()->latest()->take(3)->get();
+        $recentProjects = \App\Models\Project::query()->latest()->take(3)->get();
+
+        // 1. Calculate Monthly Visits (Last 6 Months)
+        $monthlyLabels = [];
+        $monthlyVisits = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $monthlyLabels[] = $month->format('M');
+            $monthlyVisits[] = \App\Models\Visit::query()
+                ->whereMonth('created_at', '=', $month->month, 'and')
+                ->whereYear('created_at', '=', $month->year, 'and')
+                ->count('*');
+        }
+
+        // 2. Calculate Top Projects Visited
+        $topProjects = \App\Models\Project::query()->orderByDesc('views')->take(5)->get();
+        $topProjectLabels = [];
+        $topProjectViews = [];
+        foreach ($topProjects as $proj) {
+            $topProjectLabels[] = \Illuminate\Support\Str::limit($proj->title, 12);
+            $topProjectViews[] = $proj->views;
+        }
+
+        // 3. Calculate Browser Share Distribution
+        $chromeCount = \App\Models\Visit::query()->where('user_agent', 'like', '%Chrome%')->where('user_agent', 'not like', '%Edge%')->count('*');
+        $safariCount = \App\Models\Visit::query()->where('user_agent', 'like', '%Safari%')->where('user_agent', 'not like', '%Chrome%')->count('*');
+        $firefoxCount = \App\Models\Visit::query()->where('user_agent', 'like', '%Firefox%')->count('*');
+        $edgeCount = \App\Models\Visit::query()->where('user_agent', 'like', '%Edge%')->count('*');
+        $othersCount = max(0, $visitsCount - ($chromeCount + $safariCount + $firefoxCount + $edgeCount));
+        
+        $browserData = [$chromeCount, $safariCount, $firefoxCount, $edgeCount, $othersCount];
+
+        return view('admin.dashboard', compact(
+            'projectsCount', 
+            'skillsCount', 
+            'messagesCount',
+            'visitsCount',
+            'recentMessages',
+            'recentProjects',
+            'monthlyLabels',
+            'monthlyVisits',
+            'topProjectLabels',
+            'topProjectViews',
+            'browserData'
+        ));
     }
 
     public function projects()
     {
-        $projects = \App\Models\Project::latest()->get();
+        $projects = \App\Models\Project::query()->latest()->get();
         return view('admin.projects', compact('projects'));
     }
 
@@ -62,13 +112,13 @@ class AdminController extends Controller
         return redirect()->route('admin.projects')->with('success', 'Project created successfully!');
     }
 
-    public function editProject($id)
+    public function editProject(int $id)
     {
         $project = \App\Models\Project::findOrFail($id);
         return view('admin.projects.edit', compact('project'));
     }
 
-    public function updateProject(Request $request, $id)
+    public function updateProject(Request $request, int $id)
     {
         $project = \App\Models\Project::findOrFail($id);
 
@@ -115,7 +165,7 @@ class AdminController extends Controller
         return redirect()->route('admin.projects')->with('success', 'Project updated successfully!');
     }
 
-    public function destroyProject($id)
+    public function destroyProject(int $id)
     {
         $project = \App\Models\Project::findOrFail($id);
 
@@ -138,7 +188,8 @@ class AdminController extends Controller
 
     public function skills()
     {
-        return view('admin.skills');
+        $skills = \App\Models\Skill::all();
+        return view('admin.skills', compact('skills'));
     }
 
     public function createSkill()
@@ -146,13 +197,59 @@ class AdminController extends Controller
         return view('admin.skills.create');
     }
 
+    public function storeSkill(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'icon_class' => 'required|string|max:255',
+            'color' => 'nullable|string|max:50',
+            'proficiency' => 'required|integer|min:0|max:100',
+            'category' => 'required|string',
+        ]);
+
+        \App\Models\Skill::create($request->all());
+
+        return redirect()->route('admin.skills')->with('success', 'Skill created successfully!');
+    }
+
+    public function editSkill(int $id)
+    {
+        $skill = \App\Models\Skill::findOrFail($id);
+        return view('admin.skills.edit', compact('skill'));
+    }
+
+    public function updateSkill(Request $request, int $id)
+    {
+        $skill = \App\Models\Skill::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'icon_class' => 'required|string|max:255',
+            'color' => 'nullable|string|max:50',
+            'proficiency' => 'required|integer|min:0|max:100',
+            'category' => 'required|string',
+        ]);
+
+        $skill->update($request->all());
+
+        return redirect()->route('admin.skills')->with('success', 'Skill updated successfully!');
+    }
+
+    public function destroySkill(int $id)
+    {
+        $skill = \App\Models\Skill::findOrFail($id);
+        $skill->delete();
+
+        return redirect()->route('admin.skills')->with('success', 'Skill deleted successfully!');
+    }
+
     public function messages()
     {
-        $messages = \App\Models\Message::latest()->get();
+        $messages = \App\Models\Message::query()->latest()->get();
         return view('admin.messages', compact('messages'));
     }
 
-    public function destroyMessage($id)
+    public function destroyMessage(int $id)
     {
         $message = \App\Models\Message::findOrFail($id);
         $message->delete();
@@ -166,7 +263,8 @@ class AdminController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -211,7 +309,8 @@ class AdminController extends Controller
 
     public function updateSecurity(Request $request)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
 
         $request->validate([
             'email' => 'required|email|unique:users,email,' . $user->id,

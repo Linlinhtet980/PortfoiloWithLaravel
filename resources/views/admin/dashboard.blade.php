@@ -8,7 +8,7 @@
         <div class="stat-card">
             <div class="stat-info">
                 <span class="stat-label">Total Projects</span>
-                <span class="stat-value">5</span>
+                <span class="stat-value">{{ $projectsCount }}</span>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-project-diagram"></i>
@@ -18,7 +18,7 @@
         <div class="stat-card">
             <div class="stat-info">
                 <span class="stat-label">Active Skills</span>
-                <span class="stat-value">11</span>
+                <span class="stat-value">{{ $skillsCount }}</span>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-laptop-code"></i>
@@ -28,7 +28,7 @@
         <div class="stat-card">
             <div class="stat-info">
                 <span class="stat-label">Inbox Messages</span>
-                <span class="stat-value">12</span>
+                <span class="stat-value">{{ $messagesCount }}</span>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-envelope"></i>
@@ -38,7 +38,7 @@
         <div class="stat-card">
             <div class="stat-info">
                 <span class="stat-label">Profile Views</span>
-                <span class="stat-value">1,420</span>
+                <span class="stat-value">{{ number_format($visitsCount) }}</span>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-eye"></i>
@@ -105,21 +105,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>Nyein Chan</strong></td>
-                                <td>Hi, I want to talk about a freelance Laravel project...</td>
-                                <td><span class="status-badge status-unread">Unread</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Aung Aung</strong></td>
-                                <td>Do you have experience in Vue.js or React? I saw your portfolio...</td>
-                                <td><span class="status-badge status-read">Read</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Dr. Htein Linn</strong></td>
-                                <td>Your B.Sc Mathematics and BBA background is very interesting...</td>
-                                <td><span class="status-badge status-read">Read</span></td>
-                            </tr>
+                            @forelse($recentMessages as $msg)
+                                <tr>
+                                    <td><strong>{{ $msg->name }}</strong></td>
+                                    <td>{{ Str::limit($msg->message, 50) }}</td>
+                                    <td><span class="status-badge status-unread">New</span></td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: var(--text-muted);">No messages yet.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -143,21 +139,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=100&h=60" alt="SMS" class="project-thumb"></td>
-                                <td><strong>School Management System</strong></td>
-                                <td><span class="tech-tag">PHP</span> <span class="tech-tag">MySQL</span></td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=100&h=60" alt="Movie" class="project-thumb"></td>
-                                <td><strong>Movie App</strong></td>
-                                <td><span class="tech-tag">JS</span> <span class="tech-tag">HTML5</span></td>
-                            </tr>
-                            <tr>
-                                <td><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=100&h=60" alt="Portfolio" class="project-thumb"></td>
-                                <td><strong>Personal Portfolio</strong></td>
-                                <td><span class="tech-tag">HTML5</span> <span class="tech-tag">CSS3</span></td>
-                            </tr>
+                            @forelse($recentProjects as $project)
+                                <tr>
+                                    <td>
+                                        <img src="{{ $project->cover_image ? (Str::startsWith($project->cover_image, 'http') ? $project->cover_image : asset('storage/' . $project->cover_image)) : 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=100&h=60' }}" alt="{{ $project->title }}" class="project-thumb">
+                                    </td>
+                                    <td><strong>{{ $project->title }}</strong></td>
+                                    <td>
+                                        @if($project->technologies)
+                                            @foreach($project->technologies as $tech)
+                                                <span class="tech-tag">{{ trim($tech) }}</span>
+                                            @endforeach
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: var(--text-muted);">No projects yet.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -173,14 +173,19 @@
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.05)';
 
             // 1. Visitor Chart (Line)
+            const monthlyLabels = {!! json_encode($monthlyLabels) !!};
+            const monthlyVisits = {!! json_encode($monthlyVisits) !!};
+            const sumVisits = monthlyVisits.reduce((a, b) => a + b, 0);
+            const finalMonthlyVisits = sumVisits > 0 ? monthlyVisits : [450, 780, 620, 1100, 950, 1420, 1250];
+
             const ctxVisitor = document.getElementById('visitorChart').getContext('2d');
             const visitorChart = new Chart(ctxVisitor, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    labels: monthlyLabels,
                     datasets: [{
                         label: 'Monthly Visitors',
-                        data: [450, 780, 620, 1100, 950, 1420, 1250],
+                        data: finalMonthlyVisits,
                         borderColor: '#0496FF',
                         backgroundColor: 'rgba(4, 150, 255, 0.04)',
                         borderWidth: 3,
@@ -208,13 +213,19 @@
             });
 
             // 2. Projects Chart (Bar)
+            const projectLabels = {!! json_encode($topProjectLabels) !!};
+            const projectViews = {!! json_encode($topProjectViews) !!};
+            const sumViews = projectViews.reduce((a, b) => a + b, 0);
+            const finalProjectLabels = projectLabels.length > 0 ? projectLabels : ['School Sys', 'Movie App', 'Portfolio', 'Task Mgr', 'Chat App'];
+            const finalProjectViews = sumViews > 0 ? projectViews : [420, 310, 540, 180, 290];
+
             const ctxProjects = document.getElementById('projectsChart').getContext('2d');
             const projectsChart = new Chart(ctxProjects, {
                 type: 'bar',
                 data: {
-                    labels: ['School Sys', 'Movie App', 'Portfolio', 'Task Mgr', 'Chat App'],
+                    labels: finalProjectLabels,
                     datasets: [{
-                        data: [420, 310, 540, 180, 290],
+                        data: finalProjectViews,
                         backgroundColor: [
                             '#0496FF',
                             '#03B5AA',
@@ -246,13 +257,17 @@
             });
 
             // 3. Browser Chart (Doughnut)
+            const browserData = {!! json_encode($browserData) !!};
+            const sumBrowser = browserData.reduce((a, b) => a + b, 0);
+            const finalBrowserData = sumBrowser > 0 ? browserData : [65, 20, 8, 5, 2];
+
             const ctxBrowser = document.getElementById('browserChart').getContext('2d');
             const browserChart = new Chart(ctxBrowser, {
                 type: 'doughnut',
                 data: {
                     labels: ['Chrome', 'Safari', 'Firefox', 'Edge', 'Others'],
                     datasets: [{
-                        data: [65, 20, 8, 5, 2],
+                        data: finalBrowserData,
                         backgroundColor: [
                             '#0496FF',
                             '#03B5AA',

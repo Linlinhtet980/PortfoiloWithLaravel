@@ -24,70 +24,32 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <div class="skill-icon-cell color-html">
-                                    <i class="fab fa-html5"></i>
-                                </div>
-                            </td>
-                            <td><strong>HTML5</strong></td>
-                            <td><span class="tech-tag">Frontend</span></td>
-                            <td><strong>85%</strong></td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="skill-icon-cell color-css">
-                                    <i class="fab fa-css3-alt"></i>
-                                </div>
-                            </td>
-                            <td><strong>CSS3</strong></td>
-                            <td><span class="tech-tag">Frontend</span></td>
-                            <td><strong>80%</strong></td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="skill-icon-cell color-php">
-                                    <i class="fab fa-php"></i>
-                                </div>
-                            </td>
-                            <td><strong>PHP</strong></td>
-                            <td><span class="tech-tag">Backend</span></td>
-                            <td><strong>70%</strong></td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="skill-icon-cell color-mysql">
-                                    <i class="fas fa-database"></i>
-                                </div>
-                            </td>
-                            <td><strong>MySQL</strong></td>
-                            <td><span class="tech-tag">Backend</span></td>
-                            <td><strong>65%</strong></td>
-                            <td>
-                                <div class="actions-cell">
-                                    <button class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action btn-delete" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse($skills as $skill)
+                            <tr>
+                                <td>
+                                    <div class="skill-icon-cell" style="background: rgba(255,255,255,0.05); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 6px;">
+                                        <i class="{{ $skill->icon_class }}" style="color: {{ $skill->color ?? 'var(--accent-primary)' }}; font-size: 1.2rem;"></i>
+                                    </div>
+                                </td>
+                                <td><strong>{{ $skill->name }}</strong></td>
+                                <td><span class="tech-tag">{{ ucfirst($skill->category) }}</span></td>
+                                <td><strong>{{ $skill->proficiency }}%</strong></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="{{ route('admin.skills.edit', $skill->id) }}" class="btn-action btn-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <form action="{{ route('admin.skills.delete', $skill->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this skill?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-delete" title="Delete" style="background:none; border:none; cursor:pointer; color: var(--danger-color);"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No skills registered yet.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

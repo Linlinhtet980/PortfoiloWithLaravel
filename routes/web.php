@@ -29,6 +29,10 @@ Route::prefix('admin')->group(function () {
         Route::delete('/projects/{id}', [AdminController::class, 'destroyProject'])->name('admin.projects.delete');
         Route::get('/skills', [AdminController::class, 'skills'])->name('admin.skills');
         Route::get('/skills/create', [AdminController::class, 'createSkill'])->name('admin.skills.create');
+        Route::post('/skills', [AdminController::class, 'storeSkill'])->name('admin.skills.store');
+        Route::get('/skills/{id}/edit', [AdminController::class, 'editSkill'])->name('admin.skills.edit');
+        Route::put('/skills/{id}', [AdminController::class, 'updateSkill'])->name('admin.skills.update');
+        Route::delete('/skills/{id}', [AdminController::class, 'destroySkill'])->name('admin.skills.delete');
         Route::get('/messages', [AdminController::class, 'messages'])->name('admin.messages');
         Route::delete('/messages/{id}', [AdminController::class, 'destroyMessage'])->name('admin.messages.delete');
         

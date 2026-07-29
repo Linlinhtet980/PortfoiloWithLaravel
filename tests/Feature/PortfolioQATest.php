@@ -153,4 +153,78 @@ class PortfolioQATest extends TestCase
             'bio' => 'New dynamic bio content goes here.'
         ]);
     }
+
+    public function test_admin_can_crud_skills()
+    {
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@gmail.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('Password123'),
+        ]);
+        $this->actingAs($admin);
+
+        // 1. CREATE
+        $skillData = [
+            'name' => 'Laravel Framework',
+            'category' => 'backend',
+            'proficiency' => 90,
+            'icon_class' => 'fab fa-laravel',
+            'color' => '#ff2d20'
+        ];
+
+        $response = $this->post('/admin/skills', $skillData);
+        $response->assertRedirect('/admin/skills');
+
+        $this->assertDatabaseHas('skills', [
+            'name' => 'Laravel Framework',
+            'proficiency' => 90
+        ]);
+
+        $skill = \App\Models\Skill::firstWhere('name', 'Laravel Framework');
+
+        // 2. UPDATE
+        $updatedData = [
+            'name' => 'Laravel V11',
+            'category' => 'backend',
+            'proficiency' => 95,
+            'icon_class' => 'fab fa-laravel',
+            'color' => '#ff2d20'
+        ];
+
+        $response = $this->put("/admin/skills/{$skill->id}", $updatedData);
+        $response->assertRedirect('/admin/skills');
+
+        $this->assertDatabaseHas('skills', [
+            'id' => $skill->id,
+            'name' => 'Laravel V11',
+            'proficiency' => 95
+        ]);
+
+        // 3. DELETE
+        $response = $this->delete("/admin/skills/{$skill->id}");
+        $response->assertRedirect('/admin/skills');
+
+        $this->assertDatabaseMissing('skills', [
+            'id' => $skill->id
+        ]);
+    }
+
+    public function test_homepage_records_visit()
+    {
+        $this->assertDatabaseEmpty('visits');
+
+        // Access landing page
+        $response = $this->get('/');
+        $response->assertStatus(200);
+
+        // Assert a visit was logged
+        $this->assertDatabaseCount('visits', 1);
+
+        // Access landing page again (same session)
+        $response = $this->get('/');
+        $response->assertStatus(200);
+
+        // Assert count remains 1 (preventing duplicate logs in same session)
+        $this->assertDatabaseCount('visits', 1);
+    }
 }

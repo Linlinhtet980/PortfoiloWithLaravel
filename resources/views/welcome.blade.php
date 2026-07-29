@@ -210,11 +210,17 @@
                     <span class="tech-card-index">// SYS_CV_DETAILS</span>
                     <h3 class="card-title"><i class="fas fa-address-book"></i> Address & CV</h3>
                     <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem; color: var(--text-secondary); justify-content: center; flex: 1;">
-                        <p><i class="fas fa-envelope" style="color: var(--accent-primary); margin-right: 8px;"></i> admin@ltrh.com</p>
-                        <p><i class="fas fa-phone" style="color: var(--accent-primary); margin-right: 8px;"></i> +95 9 123 456 789</p>
-                        <a href="#" class="btn-portfolio btn-portfolio-primary" style="margin-top: 6px; justify-content: center; width: 100%;">
-                            <i class="fas fa-download"></i> Download Resume
-                        </a>
+                        <p><i class="fas fa-envelope" style="color: var(--accent-primary); margin-right: 8px;"></i> {{ $profile ? $profile->email : 'admin@ltrh.com' }}</p>
+                        <p><i class="fas fa-phone" style="color: var(--accent-primary); margin-right: 8px;"></i> {{ $profile && $profile->phone ? $profile->phone : '+95 9 123 456 789' }}</p>
+                        @if ($profile && $profile->cv_path)
+                            <a href="{{ asset('storage/' . $profile->cv_path) }}" class="btn-portfolio btn-portfolio-primary" target="_blank" style="margin-top: 6px; justify-content: center; width: 100%;">
+                                <i class="fas fa-download"></i> Download Resume
+                            </a>
+                        @else
+                            <button type="button" class="btn-portfolio btn-portfolio-primary" disabled style="margin-top: 6px; justify-content: center; width: 100%; opacity: 0.6; cursor: not-allowed;">
+                                <i class="fas fa-file-pdf"></i> CV Not Available
+                            </button>
+                        @endif
                     </div>
                 </section>
             </div>
@@ -226,34 +232,16 @@
                     <span class="tech-card-index">// SYS_TECH_STACK</span>
                     <h3 class="card-title"><i class="fas fa-brain"></i> Skills & Stack</h3>
                     <div class="skills-badge-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                        <div class="skill-badge-item" style="padding: 12px 8px;">
-                            <i class="fab fa-html5" style="color: #FA9F42; font-size: 1.4rem;"></i>
-                            <span>HTML5</span>
-                        </div>
-                        <div class="skill-badge-item" style="padding: 12px 8px;">
-                            <i class="fab fa-css3-alt" style="color: #0496FF; font-size: 1.4rem;"></i>
-                            <span>CSS3</span>
-                        </div>
-                        <div class="skill-badge-item" style="padding: 12px 8px;">
-                            <i class="fab fa-js" style="color: #f1c40f; font-size: 1.4rem;"></i>
-                            <span>JavaScript</span>
-                        </div>
-                        <div class="skill-badge-item" style="padding: 12px 8px;">
-                            <i class="fab fa-php" style="color: #8e44ad; font-size: 1.4rem;"></i>
-                            <span>PHP</span>
-                        </div>
-                        <div class="skill-badge-item" style="padding: 12px 8px;">
-                            <i class="fas fa-database" style="color: #03B5AA; font-size: 1.4rem;"></i>
-                            <span>MySQL</span>
-                        </div>
-                        <div class="skill-badge-item" style="padding: 12px 8px;">
-                            <i class="fab fa-git-alt" style="color: #e74c3c; font-size: 1.4rem;"></i>
-                            <span>Git</span>
-                        </div>
-                        <div class="skill-badge-item" style="padding: 12px 8px; grid-column: span 2;">
-                            <i class="fab fa-figma" style="color: #a29bfe; font-size: 1.4rem;"></i>
-                            <span>Figma</span>
-                        </div>
+                        @forelse($skills as $skill)
+                            <div class="skill-badge-item" style="padding: 12px 8px;">
+                                <i class="{{ $skill->icon_class }}" style="color: {{ $skill->color ?? 'var(--accent-primary)' }}; font-size: 1.4rem;"></i>
+                                <span>{{ $skill->name }}</span>
+                            </div>
+                        @empty
+                            <div style="grid-column: span 2; text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0;">
+                                No skills added yet.
+                            </div>
+                        @endforelse
                     </div>
                 </section>
 

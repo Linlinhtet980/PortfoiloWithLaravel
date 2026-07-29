@@ -10,7 +10,21 @@ class HomeController extends Controller
     public function index()
     {
         $projects = Project::latest()->get();
+        $skills = \App\Models\Skill::all();
         $profile = \App\Models\User::first();
+
+        // Record a profile view if not visited in this session
+        if (!session()->has('portfolio_visited')) {
+            try {
+                \App\Models\Visit::create([
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                ]);
+                session()->put('portfolio_visited', true);
+            } catch (\Exception $e) {
+                // Fail silently if DB has issue
+            }
+        }
 
         $githubStats = cache()->remember('github_stats', 3600, function () {
             try {
@@ -36,12 +50,19 @@ class HomeController extends Controller
             ];
         });
 
-        return view('welcome', compact('projects', 'githubStats', 'profile'));
+        return view('welcome', compact('projects', 'githubStats', 'profile', 'skills'));
     }
 
     public function projectDetail($slug)
     {
         $project = Project::where('slug', $slug)->firstOrFail();
+        
+        try {
+            $project->increment('views');
+        } catch (\Exception $e) {
+            // Fail silently
+        }
+
         return view('project-detail', compact('project'));
     }
 }
