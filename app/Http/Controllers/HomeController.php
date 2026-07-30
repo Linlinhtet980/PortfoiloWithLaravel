@@ -58,7 +58,7 @@ class HomeController extends Controller
         $project = Project::query()->where('slug', '=', $slug, 'and')->firstOrFail();
         
         try {
-            $project->increment('views');
+            $project->increment('views', 1, []);
         } catch (\Exception $e) {
             // Fail silently
         }
